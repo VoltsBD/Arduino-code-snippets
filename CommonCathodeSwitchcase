@@ -1,0 +1,116 @@
+org 0xFF
+SEGrei:   retlw H'3F' ; 0
+SEGichi:   retlw H'06' ; 1
+SEGni:   retlw H'59' ; 2
+SEGsan:   retlw H'4F' ; 3
+SEGshi:   retlw H'56' ; 4
+SEGgo:   retlw H'6D' ; 5
+SEGroku:   retlw H'7D' ; 6
+SEGnana:   retlw H'07' ; 7
+SEGhachi:   retlw H'7F' ; 8
+SEGkyu:   retlw H'67' ; 9
+SEGju:   retlw H'77' ; A
+SEGB:   retlw H'7C' ; b
+SEGC:   retlw H'39' ; C
+SEGD:   retlw H'7E' ; d
+SEGE:   retlw H'79' ; E
+SEGF:   retlw H'71' ; F
+
+
+datarefresh:
+movf temporarydata,w;
+return;
+
+LOADINGDATA:
+movwf temporarydata;  // Saves initial W value to 0x16 Address;
+BTFSS STATUS,Z;
+goto nextichi;
+goto zero;
+
+nextichi:
+CALL datarefresh; //loads initial value of w register;
+SUBLW d'1';
+BTFSS STATUS,Z;
+goto nextni;
+goto one;
+
+nextni:
+CALL datarefresh; //loads initial value of w register;
+SUBLW d'2';
+BTFSS STATUS,Z;
+goto nextsan;
+goto two;
+
+nextsan:
+CALL datarefresh; //loads initial value of w register;
+SUBLW d'3';
+BTFSS STATUS,Z;
+goto nextshi
+goto three;
+
+nextshi:
+CALL datarefresh; //loads initial value of w register;
+SUBLW d'4';
+BTFSS STATUS,Z;
+goto nextgo;
+goto four;
+
+nextgo:
+CALL datarefresh; //loads initial value of w register;
+SUBLW d'5';
+BTFSS STATUS,Z;
+goto nextroku
+goto five;
+
+nextroku:
+CALL datarefresh; //loads initial value of w register;
+SUBLW d'6';
+BTFSS STATUS,Z;
+goto nextnana
+goto six;
+
+nextnana:
+CALL datarefresh; //loads initial value of w register;
+SUBLW d'7';
+BTFSS STATUS,Z;
+goto nexthachi
+goto seven;
+
+nexthachi:
+CALL datarefresh; //loads initial value of w register;
+SUBLW d'8';
+BTFSS STATUS,Z;
+goto nextkyu;
+goto eight;
+
+nextkyu:
+CALL datarefresh; //loads initial value of w register;
+SUBLW d'9';
+BTFSS STATUS,Z;
+goto finalnone
+goto nine;
+movlw d'0' ; outputs null
+goto finalload;
+
+zero: CALL SEGrei;
+      goto finalload;    
+one:  CALL SEGichi;
+      goto finalload;
+two:  CALL SEGni;
+      goto finalload;
+three:    CALL SEGsan;
+          goto finalload;
+four:     CALL SEGshi;
+          goto finalload;
+five:     CALL SEGgo;
+          goto finalload;
+six:      CALL SEGroku;
+          goto finalload;
+seven:    CALL SEGnana;
+          goto finalload;
+eight:    CALL SEGhachi;
+          goto finalload;
+nine:     CALL SEGkyu;
+          goto finalload;
+finalnone: movlw d'0';
+finalload:return;
