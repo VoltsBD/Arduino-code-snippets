@@ -1,0 +1,25 @@
+ DELAYlonger:
+    movlw d'59'; 
+    movwf count2;
+    LOOP1:
+    nop; 1mC
+    nop; 1mC
+    nop; 1mC
+    nop; 1mC
+    nop; 1mC
+    nop; 1mC
+    nop; 1mC
+    nop; 1mC
+    DECFSZ COUNT1, 1; 1mc
+    GOTO LOOP1; 1 mc
+              ;   (10mC *255) = 2550 mC = 2550 Machine Cycles
+    nop; 1mC
+    nop; 1mC
+    nop; 1mC
+    nop; 1mC
+    nop; 1mC
+    nop; 1mC
+    nop; 1mC
+    DECFSZ COUNT2,1;  2550m+8mC+1mC= 2559mC
+    GOTO LOOP1;  ; (2559mC+1mc)=2560mC
+    RETURN;      ; (2560mC)*196 = 501,760 mC or 0.50176S @ 4Mhz
