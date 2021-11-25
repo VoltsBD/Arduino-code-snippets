@@ -1,0 +1,90 @@
+#INCLUDE <P16F84.INC>
+
+COUNT1 equ 0x0C;
+COUNT2 equ 0x0D;
+
+INDR equ 0x00; // Address for Indirect Addressing
+PCL equ 0x02;
+FSR equ 0x04; // Indirect addressing tool
+PCLATH equ 0A;    // PC Lower Address
+
+WTEMP equ 0x0E ; temporary saving point for W-reg
+
+org 0x00;
+ START:
+       goto enetilize ;
+ 
+
+org 0x04
+RBIntRoutine:
+   goto getdata
+
+
+org 0x0F
+enetilize:
+    BSF STATUS, RP0; Bank change 0 to 1
+  ;  MOVLW H'01'; Ensures that RB0 is an input
+    MOVLW H'01'; Ensures that RB0 is an output to allow modification
+    MOVWF TRISB;
+    MOVLW H'0F';  sets PORTA [0-3] as inputs for simulator purposes
+  ;  MOVLW H'0F';  sets PORTA [0-3] as inputs
+    MOVWF TRISA;
+    BCF STATUS, RP0; Bank 1 to Bank 0
+    bcf intcon,1 ; reset INTEF
+    bcf option_reg,7 ; Enables Pull up for Port B
+    bcf option_reg,6 ; choses falling edge input to trigger RB0/Int
+    bsf INTCON,4 ; Enables INTEE;
+    bsf INTCON,7 ; Enables Global IE On
+    GOTO MAIN;
+
+
+ 
+ main:
+    goto main; 
+
+
+getdata:
+    bcf intcon,7; disables GIE
+    bcf intcon,1; resets INTEF
+    movf PORTA,w;
+    call LOADLOGIC ; to show zero as an output
+    movwf portb
+    check:
+    movf portb,w
+    andlw H'01'; mask
+    sublw H'01' ; test process
+    btfss status,z ; decision
+    goto check
+    bsf intcon,7; enables GIE
+    retfie ; return from interrupt
+
+
+
+
+
+
+
+LOADLOGIC:
+andlw H'0F'; mask to limit to 4 bits of data direction only
+addwf PCL;  adds the contents of w to PCL
+retlw d'3'
+retlw d'1'
+retlw d'0'
+retlw d'0'
+retlw d'2'
+retlw d'0'
+retlw d'0'
+retlw d'0'
+retlw d'3'
+retlw d'1'
+retlw d'0'
+retlw d'0'
+retlw d'2'
+retlw d'0'
+retlw d'2'
+retlw d'2'
+
+
+
+
+    END
