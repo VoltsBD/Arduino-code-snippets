@@ -1,0 +1,160 @@
+#INCLUDE <P16F84.INC>
+
+COUNT1 equ 0x0C;
+COUNT2 equ 0x0D;
+counting equ 0x0E;
+ones equ 0x0F;
+tens equ 0x10;
+
+INDR equ 0x00; // Add
+PCL equ 0x02;
+FSR equ 0x04; // Indi
+PCLATH equ 0A;    // 
+
+org 0x00;
+START:
+    goto ENETILIZE ; 
+
+
+org 0x0E;
+ENETILIZE:
+    BSF STATUS, RP0; 
+    MOVLW H'00';  imp
+    MOVWF TRISB;  
+    MOVLW H'00';  set
+    MOVWF TRISA;
+    BCF STATUS, RP0; 
+    movlw d'0';
+    movwf counting; c
+    movwf ones;
+    movwf tens;
+    GOTO MAIN;
+ 
+
+
+ MAIN:
+    movf ones,w;
+    sublw d'10';  tes
+    btfss status,z; -
+    goto show;  jumps
+    movlw d'0';
+    movwf ones; is to
+    incf tens,f; tens
+    movf tens,w;
+    sublw d'10'; 
+    btfss status,z; t
+    goto show; if ten
+    movlw d'0'; if te
+    movwf ones; reset
+    movwf tens; reset
+    
+show:
+    call showmsevseg;
+    incf ones,f; incr
+    goto main; 
+    
+ 
+showmsevseg:
+   movf ones,w; 
+   call segselone; sh
+   call delayshort;
+   movf tens,w;
+   call segseltwo; sh
+   call delayshort;
+   call segoff ;
+   call delayshort; 
+   return;
+ 
+
+DELAYshort:
+    movlw d'59'; 
+    movwf count2;
+    movlw d'0'
+    movwf count1;
+    LOOP11:
+    DECFSZ COUNT1, 1;
+    GOTO LOOP11; 1 mc
+    DECFSZ COUNT2,1; 
+    GOTO LOOP11;  ; (
+    RETURN;      ; (
+
+ DELAYlonger:
+    movlw d'59'; 
+    movwf count2;
+    movlw d'0'
+    movwf count1;
+    LOOP1:
+    nop; 1mC
+    nop; 1mC
+    nop; 1mC
+    nop; 1mC
+    nop; 1mC
+    nop; 1mC
+    nop; 1mC
+    nop; 1mC
+    DECFSZ COUNT1, 1;
+    GOTO LOOP1; 1 mc
+              ;   (10
+    nop; 1mC
+    nop; 1mC
+    nop; 1mC
+    nop; 1mC
+    nop; 1mC
+    nop; 1mC
+    nop; 1mC
+    DECFSZ COUNT2,1; 
+    GOTO LOOP1;  ; (2
+    RETURN;      ; (2
+
+
+BITZEROHIGH:
+    BSF PORTB,0; 
+    RETURN;
+ 
+LOADSEG:
+andlw H'0F'; mask to 
+addwf PCL;  adds the 
+SEGrei:   retlw H'3F'
+SEGichi:   retlw H'06
+SEGni:   retlw H'59' 
+SEGsan:   retlw H'4F'
+SEGshi:   retlw H'56'
+SEGgo:   retlw H'6D' 
+SEGroku:   retlw H'7D
+SEGnana:   retlw H'07
+SEGhachi:   retlw H'7
+SEGkyu:   retlw H'67'
+SEGju:   retlw H'77' 
+SEGB:   retlw H'7C' ;
+SEGC:   retlw H'39' ;
+SEGD:   retlw H'7E' ;
+SEGE:   retlw H'79' ;
+SEGF:   retlw H'71' ;
+
+
+
+segselone:
+   call LOADSEG; chan
+   movwf portb; loads
+   bcf PORTA,1; turns
+   bsf PORTA,0; enabl
+   return;
+
+segseltwo:
+   call LOADSEG; chan
+   movwf portb; loads
+   bcf PORTA,0; turns
+   bsf PORTA,1; enabl
+   return;
+
+segoff:
+   bcf PORTA,0; turns
+   bcf PORTA,1; turns
+   return;
+
+
+
+
+
+
+    END
