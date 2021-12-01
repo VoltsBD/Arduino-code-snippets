@@ -1,0 +1,122 @@
+// C++ code
+// 
+int q;
+int tens, ones; // tens equ 0x10; ones equ 0x11;
+
+void setup()
+{
+    pinMode(4,OUTPUT); //bcf trisb,4;
+    pinMode(5,OUTPUT);
+    pinMode(6,OUTPUT);
+    pinMode(7,OUTPUT);
+    pinMode(8,OUTPUT);
+    pinMode(9,OUTPUT);
+    pinMode(10,OUTPUT);
+    pinMode(A0,OUTPUT);
+    pinMode(A1,OUTPUT);
+    q=0;
+    Serial.begin(9600);
+}
+
+void dispense(int p)
+{
+ bool b;
+ int i,n;
+ n=0;
+ Serial.println("");
+ Serial.print(p); 
+ Serial.print("= "); 
+ for(i=6; i>-1; i--)
+ {
+   n=i+4;
+   b=bitRead(p,i);
+   //Serial.print("i:");
+   //Serial.print(i);
+   //Serial.print("B:");
+   Serial.print(b);
+  // Serial.print("O:");
+   //Serial.print(n);
+//   Serial.print(" ");
+   if(b==HIGH) { digitalWrite(n,HIGH); } 
+   else { digitalWrite(n,LOW);}
+ }
+ Serial.println("");
+ return;
+}
+
+void convert(int x)
+{
+int be;
+switch(x)
+  {
+    case 0: be=0b00111111;
+            break;
+    case 1: be=0b00000110;
+            break;
+    case 2: be=0b01011011;
+            break;
+    case 3: be=0b01001111;
+            break;
+    case 4: be=0b00100110;
+            break;
+    case 5: be=0b01101101;
+            break;
+    case 6: be=0b01111101;
+            break;
+    case 7: be=0b00000111;
+            break;
+    case 8: be=0b11111111;
+            break;
+    case 9: be=0b01100111;
+            break;    
+  default:  be=0;
+            break;
+  }
+dispense(be);
+return;
+}
+
+void switchcu(int x)
+{
+  switch(x)
+  {
+    case 0: digitalWrite(A0,HIGH); 
+            digitalWrite(A1,HIGH);
+            break;
+    case 1: digitalWrite(A0,LOW); 
+            digitalWrite(A1,HIGH);
+            break;
+    case 2: digitalWrite(A0,HIGH); 
+            digitalWrite(A1,LOW);
+            break;
+    default:digitalWrite(A0,HIGH); 
+            digitalWrite(A1,HIGH);
+            break;
+  }
+  delay(8);
+  return;
+}
+
+void loop()
+{
+  int jay=0;
+  while(jay<25){
+     tens=q/10;
+     ones=q-(tens*10);
+     convert(tens);
+     switchcu(2);
+     switchcu(0);
+     convert(ones);
+     switchcu(1);
+     switchcu(0);
+     jay++;
+     Serial.print(tens);
+     Serial.println(ones);
+  }
+  q++;
+  
+  if(q==100) { q=0;}
+  
+
+
+}
